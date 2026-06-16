@@ -1,23 +1,49 @@
 #include "raylib.h"
 
+
 int main(void) {
-    // Inicializa a janela com largura, altura e o título
-    InitWindow(800, 450, "Raylib em C Puro!");
+    
+    InitWindow(800, 600, "Quando eu fui pro C.A.P.S.");
 
-    SetTargetFPS(60); // Controla o jogo a 60 frames por segundo
+    SetTargetFPS(60); 
+    Rectangle frente = {48, 0, 16, 32};
+    Rectangle costas = {16, 0, 16, 32};
+    Rectangle esquerda = {32, 0, 16, 32};
+    Rectangle direita = {0, 0, 16, 32};
+    Rectangle frameatual = frente;
+    Rectangle personagem = {400, 300, 32, 64};
 
-    // Loop principal do jogo
+    float velocidade = 4.0f;
+
+    Texture2D BobTexture = LoadTexture ("assets/texture/Modern tiles_Free/Characters_free/Bob_16x16.png");
+
     while (!WindowShouldClose()) {
-        // 1. Atualizar variáveis (se necessário)
+        
+    if (IsKeyDown(KEY_D)){
+        personagem.x += velocidade;
+        frameatual = direita;
+    }
+    if (IsKeyDown(KEY_A)){
+        personagem.x -= velocidade;
+        frameatual = esquerda;
+    }
+    if (IsKeyDown(KEY_W)){
+        personagem.y -= velocidade;
+        frameatual = costas;
+    }
+    if (IsKeyDown(KEY_S)){
+        personagem.y += velocidade;
+        frameatual = frente;
+    }
 
-        // 2. Desenhar na tela
         BeginDrawing();
-            ClearBackground(BLACK); // Limpa a tela com a cor preta
-            DrawText("Parabéns! Raylib configurada em C.", 190, 200, 20, RAYWHITE);
+            ClearBackground((Color){ 10, 25, 20, 255 }); 
+            DrawTexturePro(BobTexture, frameatual, personagem, (Vector2){0,0}, 0.0f, WHITE);
+
         EndDrawing();
     }
 
-    // Fecha a janela e o contexto OpenGL
+    UnloadTexture(BobTexture); 
     CloseWindow();
 
     return 0;
