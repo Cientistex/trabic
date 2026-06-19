@@ -2,20 +2,30 @@
 
 
 int main(void) {
-    
-    InitWindow(800, 600, "Quando eu fui pro C.A.P.S.");
+    int largurax = 800, alturay = 600;
+    InitWindow(largurax, alturay, "Quando eu fui pro C.A.P.S.");
 
     SetTargetFPS(60); 
+    Texture2D BobTexture = LoadTexture ("assets/texture/Modern tiles_Free/Characters_free/Bob_16x16.png");
     Rectangle frente = {48, 0, 16, 32};
     Rectangle costas = {16, 0, 16, 32};
     Rectangle esquerda = {32, 0, 16, 32};
     Rectangle direita = {0, 0, 16, 32};
     Rectangle frameatual = frente;
-    Rectangle personagem = {400, 300, 32, 64};
+    Rectangle personagem = {400, 300, 32, 64}; //retângulos do bob
+
+
+    Rectangle paredeesquerda = {0, 0, 50, 600};
+    Rectangle paredecima = {0, 0, 800, 50};
+    Rectangle parededireita = {750, 0, 50, 800};
+    Rectangle paredebaixo = {0, 550, 800, 50};
 
     float velocidade = 4.0f;
 
-    Texture2D BobTexture = LoadTexture ("assets/texture/Modern tiles_Free/Characters_free/Bob_16x16.png");
+    
+    Texture2D TileTexture = LoadTexture ("assets/texture/Tiles/tile_0117.png");
+    Rectangle tileorigem = {0, 0, 16, 16};
+
 
     while (!WindowShouldClose()) {
         
@@ -36,14 +46,44 @@ int main(void) {
         frameatual = frente;
     }
 
+    if(CheckCollisionRecs(personagem, paredeesquerda)){
+        personagem.x += velocidade;
+    }
+    if(CheckCollisionRecs(personagem, paredecima)){
+        personagem.y += velocidade;
+    }
+    if(CheckCollisionRecs(personagem, parededireita)){
+        personagem.x -= velocidade;
+    }
+    if(CheckCollisionRecs(personagem, paredebaixo)){
+        personagem.y -= velocidade;
+    }
+    
+
         BeginDrawing();
+
+            
+
             ClearBackground((Color){ 10, 25, 20, 255 }); 
+            for (int y = 0; y <= 600 ; y += 32){
+                for (int x = 0; x <= 800; x+= 32){
+                    Rectangle tiledestino = {x, y, 32, 32};
+                    DrawTexturePro (TileTexture, tileorigem, tiledestino, (Vector2){0,0}, 0.0f, WHITE);
+                }
+            }
             DrawTexturePro(BobTexture, frameatual, personagem, (Vector2){0,0}, 0.0f, WHITE);
+            DrawRectangleRec (paredeesquerda, GRAY);
+            DrawRectangleRec (paredecima, GRAY);
+            DrawRectangleRec (parededireita, GRAY);
+            DrawRectangleRec (paredebaixo, GRAY);
+
+
 
         EndDrawing();
     }
 
     UnloadTexture(BobTexture); 
+    UnloadTexture(TileTexture);
     CloseWindow();
 
     return 0;
