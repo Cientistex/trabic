@@ -26,6 +26,20 @@ void DesenharQuarto(Jogador *player, Texture2D bobTex, Texture2D tileTex, bool *
         if(IsKeyDown(KEY_S)){
             personagem.y += velocidade;
         }
+        // Verifica colisões com as paredes e impede que o personagem atravesse
+        if(CheckCollisionRecs(personagem, paredeesquerda)){
+            personagem.x += velocidade;
+        }
+        if(CheckCollisionRecs(personagem, paredecima)){
+            personagem.y += velocidade;
+        }
+        if(CheckCollisionRecs(personagem, parededireita)){
+            personagem.x -= velocidade;
+        }
+        if(CheckCollisionRecs(personagem, paredebaixo)){
+            personagem.y -= velocidade;
+        }
+
         else{
             
             //Lógica do puzzle do terminal de acesso

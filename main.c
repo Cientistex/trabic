@@ -13,13 +13,10 @@ int main(void) {
     InitWindow(800, 450, "Raylib em C Puro!");
     SetTargetFPS(60); // Controla o jogo a 60 frames por segundo
 
-    Rectangle terminalComputador = {300, 200, 200, 100}; // Define a posição e tamanho do terminal de acesso
-    bool mostrandoPuzzle = false; // Variável para controlar se o puzzle do terminal está sendo mostrado 
-
-
+    
     // Loop principal do jogo
     while (!WindowShouldClose()) {
-
+        
     if (IsKeyDown(KEY_D)){
         personagem.x += velocidade;
         frameatual = direita;
