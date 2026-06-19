@@ -1,5 +1,5 @@
-#ifndef DADOS_H
-#define DADOS_H
+#ifndef DADOS_H // Evita inclusão múltipla do arquivo
+#define DADOS_H 
 
 // Definição do Tipo Item
 #include <stdbool.h>
@@ -20,4 +20,4 @@ void InicializarJogador(Jogador *j, const char *nome_inicial);
 bool SalvarJogo(Jogador *j);
 bool CarregarJogo(Jogador *j);
 
-#endif
+#endif // Fim do arquivo dados.h
