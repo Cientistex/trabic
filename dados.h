@@ -9,6 +9,11 @@ typedef struct{
     bool possui; // Indica se o jogador coletou ou não a pista  
 }Item;
 
+typedef struct{
+    int numeroVisorAtual; // Variável para armazenar o número atual do visor do terminal
+    bool puzzleQuartoResolvido; // Variável para indicar se o puzzle do quarto foi resolvido
+}ProgressoQuarto;
+
 // Definição do Tipo Jogador
 typedef struct{
     char nome[50];

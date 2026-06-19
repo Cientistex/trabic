@@ -21,6 +21,8 @@ void InicializarJogador(Jogador *j, const char *nome_inicial){
         j->inventario[i].possui = false;
     }
 }
+j->estado.numeroVisorAtual = 0; // Inicializa o número do visor do terminal
+j->estado.puzzleQuartoResolvido = false; // Inicializa o estado do puzzle do quarto como não resolvido
 
 //Grava a struct inteira do jogador no disco
 bool SalvarJogo(Jogador *j){
