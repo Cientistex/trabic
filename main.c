@@ -3,49 +3,23 @@
 
 
 int main(void) {
-<<<<<<< HEAD
     //Cria um jogador e inicializa com o nome "Bob"
     Jogador player; // Declara uma variável do tipo Jogador
     InicializarJogador(&player, "Bob"); 
 
     CarregarJogo(&player); // Tenta carregar o jogo salvo, se existir
+
     // Inicializa a janela com largura, altura e o título
     InitWindow(800, 450, "Raylib em C Puro!");
     SetTargetFPS(60); // Controla o jogo a 60 frames por segundo
 
-    int numeroVisor = 0; // Variável para controlar qual "tela" ou "estado" do jogo estamos mostrando
-    bool puzzleQuartoResolvido = false; // Variável para controlar se o puzzle do quarto foi resolvido
+    Rectangle terminalComputador = {300, 200, 200, 100}; // Define a posição e tamanho do terminal de acesso
+    bool mostrandoPuzzle = false; // Variável para controlar se o puzzle do terminal está sendo mostrado 
+
 
     // Loop principal do jogo
-=======
-    int largurax = 800, alturay = 600;
-    InitWindow(largurax, alturay, "Quando eu fui pro C.A.P.S.");
-
-    SetTargetFPS(60); 
-    Texture2D BobTexture = LoadTexture ("assets/texture/Modern tiles_Free/Characters_free/Bob_16x16.png");
-    Rectangle frente = {48, 0, 16, 32};
-    Rectangle costas = {16, 0, 16, 32};
-    Rectangle esquerda = {32, 0, 16, 32};
-    Rectangle direita = {0, 0, 16, 32};
-    Rectangle frameatual = frente;
-    Rectangle personagem = {400, 300, 32, 64}; //retângulos do bob
-
-
-    Rectangle paredeesquerda = {0, 0, 50, 600};
-    Rectangle paredecima = {0, 0, 800, 50};
-    Rectangle parededireita = {750, 0, 50, 800};
-    Rectangle paredebaixo = {0, 550, 800, 50};
-
-    float velocidade = 4.0f;
-
-    
-    Texture2D TileTexture = LoadTexture ("assets/texture/Tiles/tile_0117.png");
-    Rectangle tileorigem = {0, 0, 16, 16};
-
-
->>>>>>> 62595ff06424d30956b9859dd129509c7c6d4d12
     while (!WindowShouldClose()) {
-        
+
     if (IsKeyDown(KEY_D)){
         personagem.x += velocidade;
         frameatual = direita;
