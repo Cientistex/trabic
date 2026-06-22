@@ -1,3 +1,4 @@
+#if 0
 #include "dados.h" //Inclui a definição dos tipos e protótipos das funções
 #include <stdio.h>
 #include <string.h>
@@ -45,3 +46,4 @@ bool CarregarJogo(Jogador *j){
     fclose(arquivo);
     return true;
 }
+        #endif

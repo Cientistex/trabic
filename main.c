@@ -1,71 +1,85 @@
 #include "raylib.h"
 #include "dados.h" // Inclui a definição dos tipos e protótipos das funções
+#include "movimentacao.h"
+#include "corredor.h"
+#include <stdbool.h>
 
+typedef enum {
+    TELA_CORREDOR
+    
+}EstadoJogo;
 
 int main(void) {
-    //Cria um jogador e inicializa com o nome "Bob"
-    Jogador player; // Declara uma variável do tipo Jogador
-    InicializarJogador(&player, "Bob"); 
+  
+    Jogador player; 
 
-    CarregarJogo(&player); // Tenta carregar o jogo salvo, se existir
+
+
+    Rectangle personagem = {400, 225, 32, 64}; //retângulos do bob
+    Rectangle frente = {48, 0, 16, 32};
+    Rectangle costas = {16, 0, 16, 32};
+    Rectangle esquerda = {32, 0, 16, 32};
+    Rectangle direita = {0, 0, 16, 32};
+    Rectangle frameatual = frente;
+
+    Rectangle tileorigem = {0, 0, 16, 16};
+    Rectangle tiledestino = {0, 0, 32, 32};
+
+    int velocidade = 4;
+
+    Rectangle paredeesquerda = {0, 0, 32, 450};
+    Rectangle paredecima = {0, 0, 800, 32};
+    Rectangle parededireita = {768, 0, 32, 450};
+    Rectangle paredebaixo = {0, 418, 800, 32};
+
+    int telax = 800;
+    int telay = 450;
 
     // Inicializa a janela com largura, altura e o título
-    InitWindow(800, 450, "Raylib em C Puro!");
+    InitWindow(telax, telay, "Raylib em C Puro!");
     SetTargetFPS(60); // Controla o jogo a 60 frames por segundo
 
+    EstadoJogo TelaAtual = TELA_CORREDOR;
+
+    bool luzesApagadas = true;
+     
+    Texture2D TileTexture = LoadTexture("assets/texture/Tiles/tile_0117.png");
+
+    Texture2D BobTexture = LoadTexture("assets/texture/Modern tiles_Free/Characters_free/Bob_idle_16x16.png");
+
+    Texture2D PortaTexture = LoadTexture ("assets/texture/Tiles/tile_0310.png");
     
-    // Loop principal do jogo
+   
     while (!WindowShouldClose()) {
+
+        if (IsKeyPressed(KEY_SPACE)) {
+            luzesApagadas = !luzesApagadas;
+        }
         
-    if (IsKeyDown(KEY_D)){
-        personagem.x += velocidade;
-        frameatual = direita;
-    }
-    if (IsKeyDown(KEY_A)){
-        personagem.x -= velocidade;
-        frameatual = esquerda;
-    }
-    if (IsKeyDown(KEY_W)){
-        personagem.y -= velocidade;
-        frameatual = costas;
-    }
-    if (IsKeyDown(KEY_S)){
-        personagem.y += velocidade;
-        frameatual = frente;
-    }
-
-    if(CheckCollisionRecs(personagem, paredeesquerda)){
-        personagem.x += velocidade;
-    }
-    if(CheckCollisionRecs(personagem, paredecima)){
-        personagem.y += velocidade;
-    }
-    if(CheckCollisionRecs(personagem, parededireita)){
-        personagem.x -= velocidade;
-    }
-    if(CheckCollisionRecs(personagem, paredebaixo)){
-        personagem.y -= velocidade;
-    }
-    
-
         BeginDrawing();
+            ClearBackground(BLACK); 
 
-            
 
-            ClearBackground((Color){ 10, 25, 20, 255 }); 
-            for (int y = 0; y <= 600 ; y += 32){
-                for (int x = 0; x <= 800; x+= 32){
-                    Rectangle tiledestino = {x, y, 32, 32};
-                    DrawTexturePro (TileTexture, tileorigem, tiledestino, (Vector2){0,0}, 0.0f, WHITE);
-                }
+            switch (TelaAtual)
+            {
+                case TELA_CORREDOR:
+                    AtualizarEDesenharCorredor(&personagem, &frameatual, velocidade, BobTexture, TileTexture,PortaTexture, frente, costas, esquerda, direita);
+                    break;
+                
+                default:
+                    break;
             }
-            DrawTexturePro(BobTexture, frameatual, personagem, (Vector2){0,0}, 0.0f, WHITE);
-            DrawRectangleRec (paredeesquerda, GRAY);
-            DrawRectangleRec (paredecima, GRAY);
-            DrawRectangleRec (parededireita, GRAY);
-            DrawRectangleRec (paredebaixo, GRAY);
-
-
+            if (luzesApagadas) {
+                BeginBlendMode(BLEND_MULTIPLIED);
+                    
+                    // Um azul bem escuro/cinza funciona melhor que preto puro no Multiply.
+                    // Quanto menores os números RGB, mais escuro fica o jogo.
+                    Color escuro = { 0, 0, 51, 200 }; 
+                    
+                    DrawRectangle(0, 0, telax, telay, escuro);
+                    
+                EndBlendMode();
+            }
 
         EndDrawing();
     }

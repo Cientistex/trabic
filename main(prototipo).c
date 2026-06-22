@@ -1,3 +1,5 @@
+#if 0
+
 #include <stdio.h>
 #include "raylib.h"
 #include "dados.h"
@@ -30,3 +32,4 @@ int main (void){
 
     return 0;
 }
+    #endif

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
- int main(){
+ int escritorio(){
 
   /* Este é o rascunho do código para as estantes de livro. Ele operará de forma binária, onde os zeros e uns representam se os livros estão na estante
   ou pendendo dela, respectivamente.*/
