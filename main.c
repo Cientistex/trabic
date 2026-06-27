@@ -48,7 +48,7 @@ int main(void) {
 
     Texture2D BobTexture = LoadTexture("assets/texture/Modern tiles_Free/Characters_free/Bob_idle_16x16.png");
 
-    Texture2D PortaTexture = LoadTexture ("assets/texture/Tiles/tile_0310.png");
+    Texture2D PortaTexture = LoadTexture ("assets/texture/Tiles/tile_0283.png");
     
    
     while (!WindowShouldClose()) {
@@ -64,10 +64,10 @@ int main(void) {
             switch (TelaAtual)
             {
                 case TELA_QUARTO:
-                    AtualizarEDesenharQuarto(&personagem, &TelaAtual, &frameatual, velocidade, BobTexture, TileTexture,PortaTexture, frente, costas, esquerda, direita, tileorigem, tiledestino, portaorigem, portadestino, &playerInv);
+                    AtualizarEDesenharQuarto(&personagem, &TelaAtual, &frameatual, velocidade, BobTexture, TileTexture,PortaTexture, frente, costas, esquerda, direita, tileorigem, tiledestino, portaorigem, &playerInv);
                 break;
                 case TELA_CORREDOR:
-                    AtualizarEDesenharCorredor(&personagem,&TelaAtual, &frameatual, velocidade, BobTexture, TileTexture,PortaTexture, frente, costas, esquerda, direita, tileorigem, tiledestino, portaorigem, portadestino);
+                    AtualizarEDesenharCorredor(&personagem,&TelaAtual, &frameatual, velocidade, BobTexture, TileTexture,PortaTexture, frente, costas, esquerda, direita, tileorigem, tiledestino, portaorigem, &playerInv, &luzesApagadas);
                     break;
               /*  case TELA_ESCRITORIO:
                     AtualizarEDesenharEscritorio(&personagem,&TelaAtual, &frameatual, velocidade, BobTexture, TileTexture,PortaTexture, frente, costas, esquerda, direita, tileorigem, tiledestino, portaorigem, portadestino);

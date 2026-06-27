@@ -7,6 +7,8 @@
 typedef struct {
     bool temChave;
     bool temCarta;
+    bool temFusivel;    
+    bool temItemFinal;  // <-- Nova: Item que dropa do puzzle do Lab
 } Inventario;
 
 void AtualizarEDesenharQuarto(Rectangle *personagem, 
@@ -18,7 +20,7 @@ void AtualizarEDesenharQuarto(Rectangle *personagem,
     Texture2D PortaTexture,
     Rectangle frente, Rectangle costas, Rectangle esquerda, Rectangle direita,
     Rectangle tileorigem, Rectangle tiledestino,
-    Rectangle portaorigem, Rectangle portadestino,
+    Rectangle portaorigem,
     Inventario *inv); 
 
 

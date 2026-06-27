@@ -2,6 +2,7 @@
 #define CORREDOR_H
 
 #include "raylib.h"
+#include "quarto.h"
 
 void AtualizarEDesenharCorredor (Rectangle *personagem, 
     int *TelaAtual,
@@ -12,7 +13,9 @@ void AtualizarEDesenharCorredor (Rectangle *personagem,
     Texture2D PortaTexture,
     Rectangle frente, Rectangle costas, Rectangle esquerda, Rectangle direita,
     Rectangle tileorigem, Rectangle tiledestino,
-    Rectangle portaorigem, Rectangle portadestino);
+    Rectangle portaorigem,
+    Inventario *inv,
+    bool *luzesApagadas);
 
 
 

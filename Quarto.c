@@ -30,7 +30,7 @@ void AtualizarEDesenharQuarto(Rectangle *personagem,
     Texture2D PortaTexture,
     Rectangle frente, Rectangle costas, Rectangle esquerda, Rectangle direita,
     Rectangle tileorigem, Rectangle tiledestino,
-    Rectangle portaorigem, Rectangle portadestino,
+    Rectangle portaorigem,
     Inventario *inv){
 
     static Texture2D carta;
@@ -63,7 +63,8 @@ void AtualizarEDesenharQuarto(Rectangle *personagem,
     Rectangle cartaorigem = {0, 0, 32, 32};
     Rectangle cartadestino = {mesadestino.x + 20, mesadestino.y + 15, 16, 16};
 
-    Rectangle portaSaida = {32, 200, 32, 64}; 
+    Rectangle portadestino = {768, 200, 32, 64};
+    Rectangle portaSaida = {736, 200, 32, 64}; 
     
     static char textoDigitado[10] = ""; 
     static int contagemLetras = 0;      
