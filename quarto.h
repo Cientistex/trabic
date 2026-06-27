@@ -1,14 +1,25 @@
-#if 0
-
-#ifndef QUARTO.H
-#define QUARTO.H
+#ifndef QUARTO_H
+#define QUARTO_H
 
 #include "raylib.h"
-#include "dados.h" // Util para saber a estrutura do jogador e suas funções de inicialização e carregamento
+#include "dados.h" 
 
-void DesenharQuarto(Jogador *player, Texture2D bobTex, Texture2D tileTex, bool *mostrandoPuzzle); 
-//Declaração da função Quarto, que recebe um ponteiro para o jogador, as texturas do personagem e do tile, e um ponteiro para a variável que controla se o puzzle do terminal está sendo mostrado
+typedef struct {
+    bool temChave;
+    bool temCarta;
+} Inventario;
+
+void AtualizarEDesenharQuarto(Rectangle *personagem, 
+    int *TelaAtual,
+    Rectangle *frameatual, 
+    int velocidade,
+    Texture2D BobTexture, 
+    Texture2D tileTexture,
+    Texture2D PortaTexture,
+    Rectangle frente, Rectangle costas, Rectangle esquerda, Rectangle direita,
+    Rectangle tileorigem, Rectangle tiledestino,
+    Rectangle portaorigem, Rectangle portadestino,
+    Inventario *inv); 
+
 
 #endif
-
-    #endif

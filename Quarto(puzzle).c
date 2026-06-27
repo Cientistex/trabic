@@ -1,4 +1,5 @@
-#if 0
+/*
+
 #include<stdio.h>
 #include<stdbool.h>
 #include<string.h>
@@ -45,10 +46,10 @@ int main(){
 	printf("=====TERMINAL DE ACESSO -QUARTO 505=====\n");
 	printf("O terminal emite BIPs e exibe uma sequência numérica na tela\n");
 	
-		/* "!" representa negação de um estado lógico
+		 "!" representa negação de um estado lógico
 		Se for false -> !(variável) = true
 		Se for true - > !(variável) = false
-	*/
+	
 	int RespostaDoJogador = 0;
 	int Tentativas = 0;
 	bool PuzzleQuartoResolvido = false;
@@ -78,6 +79,4 @@ int main(){
 				printf("Tente novamente\n");
 			}
 		}	
-	
-}
-		    #endif
+*/

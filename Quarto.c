@@ -1,106 +1,240 @@
-#if 0
 #include "quarto.h"
 #include "movimentacao.h"
+#include <math.h> 
 
+typedef enum {
+    QUARTO_EXPLORANDO,
+    QUARTO_PUZZLE_PC
+} SubEstadoQuarto;
 
+static SubEstadoQuarto estadointerno = QUARTO_EXPLORANDO;
 
-// --- VARIÁVEIS GLOBAIS (Apenas constantes puras) ---
-Rectangle personagem = {400, 225, 32, 32}; 
-Rectangle frente = {32, 0, 16, 32};
-Rectangle costas = {16, 0, 15, 32};
-Rectangle esquerda = {32, 0, 16, 32};
-Rectangle direita = {0, 0, 16, 32};
-
-// CORREÇÃO: Inicializado com números diretos para ser uma constante válida
-Rectangle frameatual = {32, 0, 16, 32}; 
+static bool erroAtivo = false;
+static bool puzzleResolvido = false; 
+static bool lendoCarta = false;      
 
 float velocidade = 4.0f; 
 
-Rectangle paredeesquerda = {0, 0, 32, 600}; 
-Rectangle paredecima = {0, 0, 800, 32}; 
-Rectangle parededireita = {768, 0, 32, 600}; 
-Rectangle paredebaixo = {0, 568, 800, 32}; 
+Rectangle paredeEsquerda = {0, 0, 32, 600}; 
+Rectangle paredeCima = {0, 0, 800, 32}; 
+Rectangle paredeDireita = {768, 0, 32, 600}; 
+Rectangle paredeBaixo = {0, 418, 800, 32}; // Altura ajustada do cenário
 
-void DesenharQuarto(Jogador *player, Texture2D bobTex, Texture2D tileTex, bool *mostrandoPuzzle) {
 
-    Rectangle terminalComputador = {600, 400, 100, 100}; 
+void AtualizarEDesenharQuarto(Rectangle *personagem, 
+    int *TelaAtual,
+    Rectangle *frameatual, 
+    int velocidade,
+    Texture2D BobTexture, 
+    Texture2D tileTexture,
+    Texture2D PortaTexture,
+    Rectangle frente, Rectangle costas, Rectangle esquerda, Rectangle direita,
+    Rectangle tileorigem, Rectangle tiledestino,
+    Rectangle portaorigem, Rectangle portadestino,
+    Inventario *inv){
 
-    // 1. MOVIMENTAÇÃO (Apenas se o puzzle não estiver aberto)
-    if (!(*mostrandoPuzzle)) {
-        MoverBob(&personagem, &frameatual, velocidade, frente, costas, esquerda, direita);
+    static Texture2D carta;
+    static Texture2D mesa;
+    static Texture2D pc;
+    static Texture2D maca;
+    static bool texturasCarregadas = false;
+
+    if (!texturasCarregadas) {
+        mesa = LoadTexture("assets/texture/topdown_hospital_Assets/Pngs/lab_medium_table.png");
+        pc = LoadTexture("assets/texture/topdown_hospital_Assets/Pngs/lab_computer.png");
+        maca = LoadTexture("assets/texture/topdown_hospital_Assets/Pngs/room_bed_v.png");
+        carta = LoadTexture("assets/texture/HospitalHorrorPack1/Paper/Paper_Plain.png");
+        texturasCarregadas = true;
     }
+
+   
+    Rectangle pcdestino = {69, 40, 48, 64}; 
+    Rectangle pcorigem = {0, 0, 16, 32};
+    Rectangle terminalComputador = {pcdestino.x - 10, pcdestino.y - 10, pcdestino.width + 20, pcdestino.height + 20}; 
+   
+    Rectangle mesadestino = {400, 180, 96, 48}; 
+    Rectangle mesadestino2 = {45, 50, 96, 48};
+    Rectangle mesaorigem = {0, 0, 32, 16}; 
+
+    Rectangle macadestino = {710, 45, 48, 96}; 
+    Rectangle macaorigem = {0, 0, 16, 32}; 
+
+    Rectangle pegarcarta = {mesadestino.x, mesadestino.y, 96, 60};
+    Rectangle cartaorigem = {0, 0, 32, 32};
+    Rectangle cartadestino = {mesadestino.x + 20, mesadestino.y + 15, 16, 16};
+
+    Rectangle portaSaida = {32, 200, 32, 64}; 
     
-    // 2. SISTEMA DE COLISÕES (Independentes do Puzzle)
-    if (CheckCollisionRecs(personagem, paredeesquerda)) {
-        personagem.x += velocidade;
-    }
-    if (CheckCollisionRecs(personagem, paredecima)) {
-        personagem.y += velocidade;
-    }
-    if (CheckCollisionRecs(personagem, parededireita)) {
-        personagem.x -= velocidade;
-    }
-    if (CheckCollisionRecs(personagem, paredebaixo)) {
-        personagem.y -= velocidade;
-    }
+    static char textoDigitado[10] = ""; 
+    static int contagemLetras = 0;      
 
-    // 3. LÓGICA DO INTERATIVO / PUZZLE
-    // Se o puzzle ainda não foi resolvido, permite interagir
-    if (!player->estado.puzzleQuartoResolvido) {
+    switch (estadointerno) {
         
-        // Se apertar E perto do PC, abre a tela do puzzle
-        if (IsKeyPressed(KEY_E) && CheckCollisionRecs(personagem, terminalComputador)) {
-            *mostrandoPuzzle = true; 
-        }
-
-        // Se a tela do puzzle estiver aberta, processa os inputs dele
-        if (*mostrandoPuzzle) {
-            if (IsKeyPressed(KEY_UP)) {
-                player->estado.numeroVisorAtual++;  
-            }
-            if (IsKeyPressed(KEY_DOWN) && player->estado.numeroVisorAtual > 0) {
-                player->estado.numeroVisorAtual--;
-            }
+        case QUARTO_EXPLORANDO:
             
-            // Condição de vitória do puzzle
-            if (player->estado.numeroVisorAtual == 21) {
-                player->estado.puzzleQuartoResolvido = true;
-                player->inventario[1].possui = true;
-                SalvarJogo(player);
-                *mostrandoPuzzle = false; // Fecha o puzzle automaticamente ao acertar
+
+            if (!lendoCarta) {
+                MoverBob(personagem, frameatual, velocidade, frente, costas, esquerda, direita);
+
+                // 1. Colisões com as Paredes do Quarto
+                if (CheckCollisionRecs(*personagem, paredeEsquerda))  personagem->x += velocidade;
+                if (CheckCollisionRecs(*personagem, paredeDireita))   personagem->x -= velocidade;
+                if (CheckCollisionRecs(*personagem, paredeCima))      personagem->y += velocidade;
+                if (CheckCollisionRecs(*personagem, paredeBaixo))     personagem->y -= velocidade;
+
+                ColisaoObjeto(personagem, mesadestino);
+                ColisaoObjeto(personagem, mesadestino2);
+                ColisaoObjeto(personagem, pcdestino);
+                ColisaoObjeto(personagem, macadestino); 
+
+                if (!puzzleResolvido && CheckCollisionRecs(*personagem, terminalComputador) && IsKeyPressed(KEY_E)) {
+                     estadointerno = QUARTO_PUZZLE_PC;
+                }
+
+                if (CheckCollisionRecs(*personagem, portaSaida) && IsKeyPressed(KEY_E)) {
+                    *TelaAtual = 1; 
+                    personagem->x = 100; 
+                }
+
+                if (!inv->temCarta && CheckCollisionRecs(*personagem, pegarcarta) && IsKeyPressed(KEY_E)) {
+                    inv->temCarta = true; 
+                }
+
+                if (inv->temCarta && IsKeyPressed(KEY_Q)) {
+                    lendoCarta = true;
+                }
+            } 
+            else {
+                if (IsKeyPressed(KEY_Q)) {
+                    lendoCarta = false;
+                }
             }
-        }
+
+            for (int y = 0; y <= 600; y += 32) {
+                for (int x = 0; x <= 800; x += 32) {
+                    Rectangle destino = {x, y, 32, 32};
+                    DrawTexturePro(tileTexture, tileorigem, destino, (Vector2){0,0}, 0.0f, WHITE);
+                }
+            }
+
+
+            DrawRectangleRec(paredeEsquerda, GRAY);
+            DrawRectangleRec(paredeDireita, GRAY);
+            DrawRectangleRec(paredeCima, GRAY);
+            DrawRectangleRec(paredeBaixo, GRAY);
+            DrawTexturePro(PortaTexture, portaorigem, portadestino, (Vector2){0,0}, 0.0f, WHITE);
+
+            DrawTexturePro(mesa, mesaorigem, mesadestino, (Vector2){0,0}, 0.0f, WHITE);
+
+            DrawTexturePro(mesa, mesaorigem, mesadestino2, (Vector2){0,0}, 0.0f, WHITE);
+
+
+            if (!inv->temCarta) {
+                DrawTexturePro(carta, cartaorigem, cartadestino, (Vector2){0,0}, 0.0f, RAYWHITE);
+                DrawRectangleLines(mesadestino.x + 40, mesadestino.y + 15, 12, 16, LIGHTGRAY);
+            }
+
+            // Desenha o Computador (Sempre visível!)
+            DrawTexturePro(pc, pcorigem, pcdestino, (Vector2){0,0}, 0.0f, WHITE); 
+
+            // Desenha a Maca (Enquanto não tiver a textura, desenha um retângulo representativo)
+            if (texturasCarregadas && maca.id != 0) {
+                DrawTexturePro(maca, macaorigem, macadestino, (Vector2){0,0}, 0.0f, WHITE);
+            } else {
+                DrawRectangleRec(macadestino, DARKGREEN); // Provisório para testes
+                DrawText("MACA", macadestino.x + 10, macadestino.y + 35, 12, WHITE);
+            }
+
+            // 4. O Personagem (Desenhado por cima dos móveis se passar por trás, ou vice-versa)
+            DrawTexturePro(BobTexture, *frameatual, *personagem, (Vector2){0,0}, 0.0f, WHITE);
+
+            // 5. Mensagens Flutuantes de Interação (HUD)
+            if (!lendoCarta) {
+                if (!puzzleResolvido && CheckCollisionRecs(*personagem, terminalComputador)) {
+                    DrawText("Pressione E para interagir com o PC", pcdestino.x - 40, pcdestino.y - 30, 16, YELLOW);
+                }
+                
+                if (!inv->temCarta && CheckCollisionRecs(*personagem, mesadestino)) {
+                    DrawText("Pressione E para pegar a carta", mesadestino.x - 30, mesadestino.y - 30, 16, YELLOW);
+                }
+            }
+
+            if (inv->temCarta) {
+                DrawText("[Q] LER CARTA DO INVENTARIO", 32, 540, 18, LIGHTGRAY);
+            }
+
+            // Tela de leitura da carta
+            if (lendoCarta) {
+                DrawRectangle(0, 0, 800, 600, Fade(BLACK, 0.6f));
+                DrawRectangle(150, 80, 500, 440, BEIGE);
+                DrawRectangleLines(150, 80, 500, 440, BROWN);
+
+                DrawText("ACORDO SEMPRE ÀS 03H.", 180, 150, 18, DARKGRAY);
+                DrawText("CONTO 54 CARNEIROS.", 180, 180, 18, DARKGRAY);
+                DrawText("OUÇO 7 BATIDAS NA PORTA.", 180, 210, 18, DARKGRAY);
+                DrawText("ESPERO 8 SEGUNDOS.", 180, 240, 18, DARKGRAY);
+                DrawText("ENTÃO MAIS 2.", 180, 270, 18, DARKGRAY);
+                
+                DrawText("Pressione Q para fechar a carta", 270, 470, 16, RED);
+            }
+            break;
+
+        case QUARTO_PUZZLE_PC:
+            // (A lógica do terminal se mantém idêntica e correta aqui...)
+            int caractere = GetCharPressed();
+            while (caractere > 0) {
+                if ((caractere >= '0' && caractere <= '9') && (contagemLetras < 5)) {
+                    textoDigitado[contagemLetras] = (char)caractere;
+                    contagemLetras++;
+                    textoDigitado[contagemLetras] = '\0'; 
+                    erroAtivo = false;
+                }
+                caractere = GetCharPressed();
+            }
+
+            if (IsKeyPressed(KEY_BACKSPACE)) {
+                contagemLetras--;
+                if (contagemLetras < 0) contagemLetras = 0;
+                textoDigitado[contagemLetras] = '\0'; 
+                erroAtivo = false;
+            }
+
+            if (IsKeyPressed(KEY_ENTER)) {
+                if (TextIsEqual(textoDigitado, "21")) {
+                    puzzleResolvido = true; 
+                    estadointerno = QUARTO_EXPLORANDO;
+                    textoDigitado[0] = '\0';
+                    contagemLetras = 0;
+                    erroAtivo = false;
+                    inv->temChave = true;
+                } else {
+                    erroAtivo = true;
+                }
+            }
+
+            if (IsKeyPressed(KEY_Q)) {
+                estadointerno = QUARTO_EXPLORANDO; 
+            }
+
+            DrawRectangle(0, 0, 800, 600, Fade(BLACK, 0.8f));
+            DrawRectangleLinesEx((Rectangle){0,0,800,450}, 50, GOLD); 
+
+            DrawText("CAPS System", 120, 100, 40, GREEN);
+            DrawText("INSIRA O PROXIMO NUMERO DA SEQUENCIA:", 120, 150, 18, GREEN);
+            DrawText("0, 1, 1, 2, 3, 5, 8, 13, ...", 120, 180, 18, GREEN);
+
+            DrawText("RESPOSTA: ", 120, 250, 20, GREEN);
+            DrawText(textoDigitado, 240, 250, 20, GREEN);
+
+            if ((int)(GetTime() * 2) % 2 == 0) {
+                DrawText("_", 240 + (contagemLetras * 12), 250, 20, GREEN);
+            }
+
+            if (erroAtivo) {
+                DrawText(">>> ERRO: SEQUENCIA INCORRETA. ACESSO NEGADO. <<<", 120, 310, 16, RED);
+            }
+
+            DrawText("[Pressione ENTER para enviar | Q para sair]", 120, 380, 14, DARKGREEN);
+            break;
     }
-
-    // 4. CAMADA DE DESENHO (Tudo trazido para dentro da função!)
-    
-    // Desenha o chão completo do quarto
-    for (int y = 0; y <= 600; y += 32) {
-        for (int x = 0; x <= 800; x += 32) {
-            DrawTexturePro(tileTex, (Rectangle){0,0,32,32}, (Rectangle){x,y,32,32}, (Vector2){0,0}, 0.0f, WHITE);
-        }
-    }
-
-    // Desenha as Paredes invisíveis (mude para WHITE ou tire o comentário se quiser vê-las)
-    DrawRectangleRec(paredeesquerda, BLANK);
-    DrawRectangleRec(paredecima, BLANK);
-    DrawRectangleRec(parededireita, BLANK);
-    DrawRectangleRec(paredebaixo, BLANK);
-    
-    // Desenha o Terminal (Apenas um retângulo indicador por enquanto)
-    DrawRectangleRec(terminalComputador, BLUE);
-
-    // Desenha o Bob (CORREÇÃO: Usando o parâmetro 'bobTex' que veio do main)
-    DrawTexturePro(bobTex, frameatual, personagem, (Vector2){0,0}, 0.0f, WHITE);
-
-    // Se o puzzle estiver ativo, desenha a interface por cima de tudo
-    if (*mostrandoPuzzle) {
-        DrawRectangle(0, 0, 800, 600, Fade(BLACK, 0.85f)); 
-        DrawText("===== TERMINAL DE ACESSO - QUARTO 505 =====", 50, 50, 20, WHITE);
-        DrawText("Sequência: 1, 1, 2, 3, 5, 8, 13, ...", 50, 100, 20, WHITE);
-        DrawText("Use as setas para CIMA e para BAIXO para decifrar o código.", 50, 150, 20, WHITE);
-        DrawText(TextFormat("Número atual no visor: %d", player->estado.numeroVisorAtual), 50, 200, 20, YELLOW);
-    }
-
-} 
-    #endif
+}

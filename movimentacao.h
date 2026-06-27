@@ -5,4 +5,5 @@
 
 void MoverBob(Rectangle *personagem, Rectangle *frameAtual, float velocidade, Rectangle frente, Rectangle costas, Rectangle esquerda, Rectangle direita);
 
+void ColisaoObjeto(Rectangle *player, Rectangle obstaculo);
 #endif
