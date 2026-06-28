@@ -127,9 +127,6 @@ int main(void) {
 
         if (lendoCarta) {
 
-        if (IsKeyPressed(KEY_Q)) {
-            lendoCarta = false;
-        }
 
         DrawRectangle(0, 0, 800, 450, Fade(BLACK, 0.6f));
         DrawRectangle(150, 50, 500, 350, BEIGE);
@@ -141,7 +138,7 @@ int main(void) {
         DrawText("ESPERO 8 SEGUNDOS.", 180, 190, 18, DARKGRAY);
         DrawText("ENTÃO MAIS 2.", 180, 220, 18, DARKGRAY);
         
-        DrawText("Pressione C ou Q para fechar", 280, 360, 16, RED);
+        DrawText("Pressione C fechar", 280, 360, 16, RED);
     }
 
         EndDrawing();

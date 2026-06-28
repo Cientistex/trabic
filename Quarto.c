@@ -48,9 +48,9 @@ void AtualizarEDesenharQuarto(Rectangle *personagem,
     }
 
    
-    Rectangle pcdestino = {69, 40, 48, 64}; 
-    Rectangle pcorigem = {0, 0, 16, 32};
-    Rectangle terminalComputador = {pcdestino.x - 10, pcdestino.y - 10, pcdestino.width + 20, pcdestino.height + 20}; 
+    Rectangle pcdestino = {69, 40, 48, 48}; 
+    Rectangle pcorigem = {0, 4, 16, 16};
+    Rectangle terminalComputador = {pcdestino.x - 10, pcdestino.y - 10, pcdestino.width + 20, pcdestino.height + 30}; 
    
     Rectangle mesadestino = {400, 180, 96, 48}; 
     Rectangle mesadestino2 = {45, 50, 96, 48};
@@ -183,10 +183,6 @@ void AtualizarEDesenharQuarto(Rectangle *personagem,
                 } else {
                     erroAtivo = true;
                 }
-            }
-
-            if (IsKeyPressed(KEY_Q)) {
-                estadointerno = QUARTO_EXPLORANDO; 
             }
 
             DrawRectangle(0, 0, 800, 600, Fade(BLACK, 0.8f));

@@ -46,8 +46,8 @@ static int estadointerno = MODO_EXPLORACAO;
     Rectangle paredeBaixo    = { 0, 418, 800, 32 };
     Rectangle portaSaidaI    = { 368, 390, 64, 32 }; 
 
-    Rectangle pcorigem      = {0, 0, 16, 32}; 
-    Rectangle pcdestino     = {200, 100, 48, 96}; 
+    Rectangle pcorigem      = {0, 4, 16, 20}; 
+    Rectangle pcdestino     = {200, 100, 48, 72}; 
     Rectangle pcdestinoI    = {200, 100, 96, 80}; 
 
     Rectangle bancadaOrigem    = {0, 0, 64, 32};
