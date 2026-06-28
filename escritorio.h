@@ -1,18 +1,12 @@
-#ifndef QUARTO_H
-#define QUARTO_H
+#ifndef ESCRITORIO_H
+#define ESCRITORIO_H
 
 #include "raylib.h"
-#include "dados.h" 
+#include "dados.h"
+#include "movimentacao.h"
+#include "quarto.h"
 
-typedef struct {
-    bool temChave;
-    bool temCarta;
-    bool temFusivel;    
-    bool temCorrosivo;
-    bool temFormula;
-} Inventario;
-
-void AtualizarEDesenharQuarto(Rectangle *personagem, 
+void AtualizarEDesenharEscritorio(Rectangle *personagem, 
     int *TelaAtual,
     Rectangle *frameatual, 
     int velocidade,
@@ -22,7 +16,6 @@ void AtualizarEDesenharQuarto(Rectangle *personagem,
     Rectangle frente, Rectangle costas, Rectangle esquerda, Rectangle direita,
     Rectangle tileorigem, Rectangle tiledestino,
     Rectangle portaorigem,
-    Inventario *inv); 
+    Inventario *inv);
 
-
-#endif
+    #endif

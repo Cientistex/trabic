@@ -18,7 +18,7 @@ float velocidade = 4.0f;
 Rectangle paredeEsquerda = {0, 0, 32, 600}; 
 Rectangle paredeCima = {0, 0, 800, 32}; 
 Rectangle paredeDireita = {768, 0, 32, 600}; 
-Rectangle paredeBaixo = {0, 418, 800, 32}; // Altura ajustada do cenário
+Rectangle paredeBaixo = {0, 418, 800, 32}; 
 
 
 void AtualizarEDesenharQuarto(Rectangle *personagem, 
@@ -101,12 +101,12 @@ void AtualizarEDesenharQuarto(Rectangle *personagem,
                     inv->temCarta = true; 
                 }
 
-                if (inv->temCarta && IsKeyPressed(KEY_Q)) {
+                if (inv->temCarta && IsKeyPressed(KEY_C)) {
                     lendoCarta = true;
                 }
             } 
             else {
-                if (IsKeyPressed(KEY_Q)) {
+                if (IsKeyPressed(KEY_C)) {
                     lendoCarta = false;
                 }
             }
@@ -132,56 +132,28 @@ void AtualizarEDesenharQuarto(Rectangle *personagem,
 
             if (!inv->temCarta) {
                 DrawTexturePro(carta, cartaorigem, cartadestino, (Vector2){0,0}, 0.0f, RAYWHITE);
-                DrawRectangleLines(mesadestino.x + 40, mesadestino.y + 15, 12, 16, LIGHTGRAY);
+                
             }
+            DrawTexturePro(pc,pcorigem,pcdestino,(Vector2){0,0}, 0.0f, RAYWHITE);
 
-            // Desenha o Computador (Sempre visível!)
-            DrawTexturePro(pc, pcorigem, pcdestino, (Vector2){0,0}, 0.0f, WHITE); 
+            DrawTexturePro(maca, macaorigem, macadestino, (Vector2){0,0}, 0.0f, RAYWHITE);
 
-            // Desenha a Maca (Enquanto não tiver a textura, desenha um retângulo representativo)
-            if (texturasCarregadas && maca.id != 0) {
-                DrawTexturePro(maca, macaorigem, macadestino, (Vector2){0,0}, 0.0f, WHITE);
-            } else {
-                DrawRectangleRec(macadestino, DARKGREEN); // Provisório para testes
-                DrawText("MACA", macadestino.x + 10, macadestino.y + 35, 12, WHITE);
-            }
 
-            // 4. O Personagem (Desenhado por cima dos móveis se passar por trás, ou vice-versa)
             DrawTexturePro(BobTexture, *frameatual, *personagem, (Vector2){0,0}, 0.0f, WHITE);
 
-            // 5. Mensagens Flutuantes de Interação (HUD)
             if (!lendoCarta) {
                 if (!puzzleResolvido && CheckCollisionRecs(*personagem, terminalComputador)) {
                     DrawText("Pressione E para interagir com o PC", pcdestino.x - 40, pcdestino.y - 30, 16, YELLOW);
                 }
                 
-                if (!inv->temCarta && CheckCollisionRecs(*personagem, mesadestino)) {
+                if (!inv->temCarta && CheckCollisionRecs(*personagem, pegarcarta)) {
                     DrawText("Pressione E para pegar a carta", mesadestino.x - 30, mesadestino.y - 30, 16, YELLOW);
                 }
-            }
-
-            if (inv->temCarta) {
-                DrawText("[Q] LER CARTA DO INVENTARIO", 32, 540, 18, LIGHTGRAY);
-            }
-
-            // Tela de leitura da carta
-            if (lendoCarta) {
-                DrawRectangle(0, 0, 800, 600, Fade(BLACK, 0.6f));
-                DrawRectangle(150, 80, 500, 440, BEIGE);
-                DrawRectangleLines(150, 80, 500, 440, BROWN);
-
-                DrawText("ACORDO SEMPRE ÀS 03H.", 180, 150, 18, DARKGRAY);
-                DrawText("CONTO 54 CARNEIROS.", 180, 180, 18, DARKGRAY);
-                DrawText("OUÇO 7 BATIDAS NA PORTA.", 180, 210, 18, DARKGRAY);
-                DrawText("ESPERO 8 SEGUNDOS.", 180, 240, 18, DARKGRAY);
-                DrawText("ENTÃO MAIS 2.", 180, 270, 18, DARKGRAY);
-                
-                DrawText("Pressione Q para fechar a carta", 270, 470, 16, RED);
             }
             break;
 
         case QUARTO_PUZZLE_PC:
-            // (A lógica do terminal se mantém idêntica e correta aqui...)
+
             int caractere = GetCharPressed();
             while (caractere > 0) {
                 if ((caractere >= '0' && caractere <= '9') && (contagemLetras < 5)) {

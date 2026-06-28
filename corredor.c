@@ -40,7 +40,7 @@ void AtualizarEDesenharCorredor(Rectangle *personagem,
     ColisaoObjeto(personagem,paredeEsquerda);
     ColisaoObjeto(personagem,paredeDireita);
 
-    // INTERAÇÃO: Porta do Quarto (Voltar para o Quarto)
+  
     if (CheckCollisionRecs(*personagem, portaQuartoI ) && IsKeyPressed(KEY_E)) {
         *TelaAtual = 0;
         personagem->x = 450; 
@@ -49,38 +49,32 @@ void AtualizarEDesenharCorredor(Rectangle *personagem,
 
     if (CheckCollisionRecs(*personagem, portaEscritorioI) && IsKeyPressed(KEY_E)) {
         if (inv->temChave) {
-            *TelaAtual = 2; // ID da Tela do Escritório
-            personagem->x = 400; // Ajuste conforme a entrada do escritório
+            *TelaAtual = 2; 
+            personagem->x = 400; 
             personagem->y = 400;
         }
     }
 
-    // INTERAÇÃO: Porta do Laboratório
     if (CheckCollisionRecs(*personagem, portaLabI) && IsKeyPressed(KEY_E)) {
-        *TelaAtual = 3; // ID da Tela do Laboratório
+        *TelaAtual = 3; 
         personagem->x = 400; 
         personagem->y = 400;
     }
 
-    // INTERAÇÃO: Caixa de Força
     if (CheckCollisionRecs(*personagem, caixaForca) && IsKeyPressed(KEY_E)) {
         if (inv->temFusivel) {
             *luzesApagadas = false; 
         }
     }
 
-    // INTERAÇÃO: Porta Final
+
     if (CheckCollisionRecs(*personagem, portaFinalI) && IsKeyPressed(KEY_E)) {
-        if (inv->temItemFinal) {
-            *TelaAtual = 4; // ID da Tela de Final de Jogo / Vitória
+        if (inv->temCorrosivo) {
+            *TelaAtual = 4; 
         }
     }
 
-    // ==========================================
-    // CAMADA DE DESENHO (RENDERIZAÇÃO)
-    // ==========================================
 
-    // 1. Desenha o Chão
     for (int y = 0; y <= 600; y += 32) {
         for (int x = 0; x <= 800; x += 32) {
             Rectangle destino = {x, y, 32, 32};
@@ -88,23 +82,19 @@ void AtualizarEDesenharCorredor(Rectangle *personagem,
         }
     }
 
-    // 2. Desenha as Paredes base
     DrawRectangleRec(paredeEsquerda, GRAY);
     DrawRectangleRec(paredeDireita, GRAY);
     DrawRectangleRec(paredeCima, GRAY);
     DrawRectangleRec(paredeBaixo, GRAY);
 
-    // 3. Desenha as Portas e a Caixa de Força no cenário
     DrawTexturePro(PortaTexture, portaorigem, portaQuarto, (Vector2){0,0}, 0.0f, WHITE);
-    DrawTexturePro(PortaTexture, portaorigem, portaEscritorio, (Vector2){0,0}, 0.0f, WHITE); // Vermelha se trancada
+    DrawTexturePro(PortaTexture, portaorigem, portaEscritorio, (Vector2){0,0}, 0.0f, WHITE); 
     DrawTexturePro(PortaTexture, portaorigem, portaLab, (Vector2){0,0}, 0.0f, WHITE);
     DrawTexturePro(PortaTexture, portaorigem, portaFinal, (Vector2){0,0}, 0.0f, WHITE);
 
-    // Desenha a Caixa de Força (Retângulo cinza com um detalhe raio se apagado/aceso)
     DrawRectangleRec(caixaForca, DARKGRAY);
-    DrawRectangleLinesEx(caixaForca, 2, !(*luzesApagadas) ? GREEN : RED); // Verde se estiver aceso
+    DrawRectangleLinesEx(caixaForca, 2, !(*luzesApagadas) ? GREEN : RED); 
     DrawText("⚡", caixaForca.x + 12, caixaForca.y + 12, 16, !(*luzesApagadas) ? YELLOW : GRAY);
-    // 4. Desenha o Protagonista
     DrawTexturePro(BobTexture, *frameatual, *personagem, (Vector2){0,0}, 0.0f, WHITE);
 
 
@@ -138,7 +128,7 @@ void AtualizarEDesenharCorredor(Rectangle *personagem,
     }
 
     if (CheckCollisionRecs(*personagem, portaFinalI)) {
-        if (inv->temItemFinal) {
+        if (inv->temCorrosivo) {
             DrawText("Pressione E para usar o item e ESCAPAR!", 450, 280, 16, GREEN);
         } else {
             DrawText("A porta precisa de um dispositivo do Laboratório para abrir.", 380, 280, 16, RED);

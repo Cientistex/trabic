@@ -3,13 +3,15 @@
 #include "movimentacao.h"
 #include "corredor.h"
 #include "quarto.h"
+#include "escritorio.h"
+#include "lab.h"
 #include <stdbool.h>
 
 typedef enum {
     TELA_QUARTO = 0,
     TELA_CORREDOR = 1,
-   // TELA_ESCRITORIO = 2,
-    //TELA_LAB = 3
+    TELA_ESCRITORIO = 2,
+    TELA_LAB = 3
     
 }EstadoJogo;
 
@@ -36,13 +38,14 @@ int main(void) {
     int telax = 800;
     int telay = 450;
 
-    // Inicializa a janela com largura, altura e o título
-    InitWindow(telax, telay, "Raylib em C Puro!");
-    SetTargetFPS(60); // Controla o jogo a 60 frames por segundo
+ 
+    InitWindow(telax, telay, "Quando eu fui pro CAPS!");
+    SetTargetFPS(60); 
 
     int TelaAtual = TELA_QUARTO;
 
     bool luzesApagadas = true;
+    bool lendoCarta = false;
      
     Texture2D TileTexture = LoadTexture("assets/texture/Tiles/tile_0117.png");
 
@@ -55,6 +58,9 @@ int main(void) {
 
         if (IsKeyPressed(KEY_SPACE)) {
             luzesApagadas = !luzesApagadas;
+        }
+        if (playerInv.temCarta && IsKeyPressed(KEY_C)) {
+        lendoCarta = !lendoCarta; 
         }
         
         BeginDrawing();
@@ -69,45 +75,74 @@ int main(void) {
                 case TELA_CORREDOR:
                     AtualizarEDesenharCorredor(&personagem,&TelaAtual, &frameatual, velocidade, BobTexture, TileTexture,PortaTexture, frente, costas, esquerda, direita, tileorigem, tiledestino, portaorigem, &playerInv, &luzesApagadas);
                     break;
-              /*  case TELA_ESCRITORIO:
-                    AtualizarEDesenharEscritorio(&personagem,&TelaAtual, &frameatual, velocidade, BobTexture, TileTexture,PortaTexture, frente, costas, esquerda, direita, tileorigem, tiledestino, portaorigem, portadestino);
+                    
+              case TELA_ESCRITORIO:
+                    AtualizarEDesenharEscritorio(&personagem,&TelaAtual, &frameatual, velocidade, BobTexture, TileTexture,PortaTexture, frente, costas, esquerda, direita, tileorigem, tiledestino, portaorigem, &playerInv);
                 break;
+
                 case TELA_LAB:
-                    AtualizarEDesenharLab(&personagem,&TelaAtual, &frameatual, velocidade, BobTexture, TileTexture,PortaTexture, frente, costas, esquerda, direita, tileorigem, tiledestino, portaorigem, portadestino);
+                    AtualizarEDesenharLab(&personagem,&TelaAtual, &frameatual, velocidade, BobTexture, TileTexture,PortaTexture, frente, costas, esquerda, direita, tileorigem, tiledestino, portaorigem, &playerInv);
                 break;
-                */
+                
                 default:
                     break;
             }
             if (luzesApagadas) {
                 BeginBlendMode(BLEND_MULTIPLIED);
                     
-                    // Um azul bem escuro/cinza funciona melhor que preto puro no Multiply.
-                    // Quanto menores os números RGB, mais escuro fica o jogo.
                     Color escuro = { 0, 0, 51, 200 }; 
                     
                     DrawRectangle(0, 0, telax, telay, escuro);
                     
                 EndBlendMode();
             }
-            if (playerInv.temChave) {
-            // Desenha o slot ativo (Dourado) se o jogador tiver a chave
+        if (playerInv.temChave) {
             DrawRectangle(730, 20, 50, 50, Fade(GOLD, 0.6f));
             DrawRectangleLines(730, 20, 50, 50, YELLOW);
             DrawText("CHAVE", 736, 38, 12, WHITE);
         } else {
-            // Desenha o slot vazio (Cinza)
             DrawRectangleLines(730, 20, 50, 50, GRAY);
         }
         if (playerInv.temCarta) {
-            // Desenha o slot ativo (Azul acinzentado/Papel)
             DrawRectangle(670, 20, 50, 50, Fade(SKYBLUE, 0.5f));
             DrawRectangleLines(670, 20, 50, 50, BLUE);
             DrawText("CARTA", 680, 38, 12, WHITE);
         } else {
-            // Desenha o slot vazio (Cinza)
             DrawRectangleLines(670, 20, 50, 50, GRAY);
         }
+        if (playerInv.temFusivel) {
+            DrawRectangle(610, 20, 50, 50, Fade(ORANGE, 0.5f));
+            DrawRectangleLines(610, 20, 50, 50, ORANGE);
+            DrawText("FUSIVEL", 614, 38, 10, WHITE);
+        } else {
+            DrawRectangleLines(610, 20, 50, 50, GRAY);
+        }
+        if (playerInv.temCorrosivo) {
+            DrawRectangle(550, 20, 50, 50, Fade(LIME, 0.5f));
+            DrawRectangleLines(550, 20, 50, 50, LIME);
+            DrawText("ACIDO", 558, 38, 12, WHITE);
+        } else {
+            DrawRectangleLines(550, 20, 50, 50, GRAY);
+        }
+
+        if (lendoCarta) {
+
+        if (IsKeyPressed(KEY_Q)) {
+            lendoCarta = false;
+        }
+
+        DrawRectangle(0, 0, 800, 450, Fade(BLACK, 0.6f));
+        DrawRectangle(150, 50, 500, 350, BEIGE);
+        DrawRectangleLines(150, 50, 500, 350, BROWN);
+
+        DrawText("ACORDO SEMPRE ÀS 03H.", 180, 100, 18, DARKGRAY);
+        DrawText("CONTO 54 CARNEIROS.", 180, 130, 18, DARKGRAY);
+        DrawText("OUÇO 7 BATIDAS NA PORTA.", 180, 160, 18, DARKGRAY);
+        DrawText("ESPERO 8 SEGUNDOS.", 180, 190, 18, DARKGRAY);
+        DrawText("ENTÃO MAIS 2.", 180, 220, 18, DARKGRAY);
+        
+        DrawText("Pressione C ou Q para fechar", 280, 360, 16, RED);
+    }
 
         EndDrawing();
     }
